@@ -2,7 +2,11 @@
 import Welcome from "../components/Welcome.astro"
 import Layout from "../layouts/Layout.astro"
 
-console.log(import.meta.env.PUBLIC_SANITY_STUDIO_PROJECT_ID)
+export const prerender = false
+import { sanityClient } from "sanity:client"
+const posts = await sanityClient.fetch(`*[_type == "post" && defined(slug)]`)
+
+console.log(posts)
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -22,4 +26,13 @@ console.log(import.meta.env.PUBLIC_SANITY_STUDIO_PROJECT_ID)
 			<a href=""></a>
 		</p>
 	</main>
+	<ul>
+		{
+			posts.map(post => (
+				<li>
+					<a href={`/posts/${post.slug.current}`}>{post.title}</a>
+				</li>
+			))
+		}
+	</ul>
 </Layout>
